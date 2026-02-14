@@ -2,6 +2,9 @@ import Navbar from "components/Navbar";
 import type { Route } from "./+types/home";
 import { ArrowRight, ArrowUpRight, Clock, Layers } from "lucide-react";
 import Button from "components/ui/Button";
+import Upload from "components/Upload";
+import { useNavigate } from "react-router";
+import { useRef, useState } from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,8 +12,33 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
-
 export default function Home() {
+   const navigate = useNavigate();
+    const [projects, setProjects] = useState<DesignItem[]>([]);
+    const isCreatingProjectRef = useRef(false);
+
+    const handleUploadComplete = async (base64Image: string) =>{
+      const newId = Date.now().toString();
+     navigate(`/visualizer/${newId}`, {
+                // state: {
+                //     initialImage: saved.sourceImage,
+                //     initialRendered: saved.renderedImage || null,
+                //     name
+                // }
+            });
+
+            return true;
+    }
+
+
+
+
+
+
+
+
+
+
   return (
     <div className="home">
       <Navbar />
@@ -49,7 +77,7 @@ export default function Home() {
               <p>Supports JPG, PNG, formats up to 10MB</p>
             </div>
 
-            {/* <Upload /> */}
+            <Upload onComplete={handleUploadComplete} />
           </div>
         </div>
       </section>
@@ -83,7 +111,7 @@ export default function Home() {
                   <h3>Project Manhattan</h3>
                   <div className="meta">
                     <Clock size={12} />
-                    <span>{new Date(timestamp).toLocaleDateString()}</span>
+                    {/* <span>{new Date(timestamp).toLocaleDateString()}</span> */}
                     <span>By HA.DEV</span>
                   </div>
                 </div>
@@ -98,4 +126,5 @@ export default function Home() {
       </section>
     </div>
   );
+
 }
