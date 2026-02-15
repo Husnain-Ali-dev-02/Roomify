@@ -27,7 +27,7 @@ export default function Home() {
          id: newId, name, sourceImage: base64Image, renderedImage: undefined,
          timestamp: Date.now()
       }
-      const saved = await createProject({ item: newItem, visibility: 'private'});
+      const saved = await createProject  ({ item: newItem, visibility: 'private'});
 
       if(!saved){
         console.error("Failed to create project")

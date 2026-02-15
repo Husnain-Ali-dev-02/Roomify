@@ -48,7 +48,7 @@ export const createProject = async ({ item, visibility = "private" }: CreateProj
 
 const {
     sourcePath : _sourcePath,
-    renderPath: _renderPath,
+    renderedPath: _renderPath,
     publicPath: _publicPath,
     ...rest
 } = item;
