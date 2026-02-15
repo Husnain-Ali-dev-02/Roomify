@@ -113,7 +113,13 @@ export default function Home() {
 
           <div className="projects-grid">
        {projects.map(({id, name, renderedImage, sourceImage, timestamp}) => (
-                          <div key={id} className="project-card group" onClick={() => navigate(`/visualizer/${id}`)}>
+                          <div key={id} className="project-card group" onClick={() => navigate(`/visualizer/${id}`, {
+    state: {
+        initialImage: sourceImage,
+        initialRendered: renderedImage || null,
+        name,
+    }
+})}>
                               <div className="preview">
                                   <img  src={renderedImage || sourceImage} alt="Project"
                                   />
