@@ -1,8 +1,9 @@
 import { useNavigate, useOutletContext, useParams } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { generate3DView } from "../../lib/ai.action";
-import { Box, Download, RefreshCcw, Share2, X, Check, Copy } from "lucide-react";
+import { Box, Download, RefreshCcw, X } from "lucide-react";
 import Button from "../../components/ui/Button";
+import ShareButton from "../../components/ShareButton";
 import { createProject, getProjectById } from "../../lib/puter.action";
 import {
   ReactCompareSlider,
@@ -21,12 +22,6 @@ const VisualizerId = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
-
-  const shareLink = typeof window !== "undefined" 
-    ? `${window.location.origin}/visualizer/${id}` 
-    : "";
 
   const handleBack = () => navigate("/");
   const handleExport = () => {
@@ -38,20 +33,6 @@ const VisualizerId = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(shareLink);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (error) {
-      console.error("Failed to copy link:", error);
-    }
-  };
-
-  const handleShare = () => {
-    setIsShareModalOpen(true);
   };
 
   const runGeneration = async (item: DesignItem) => {
@@ -167,10 +148,11 @@ const VisualizerId = () => {
               >
                 <Download className="w-4 h-4 mr-2" /> Export
               </Button>
-              <Button size="sm" onClick={handleShare} className="share">
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </Button>
+              <ShareButton
+                projectId={id}
+                projectName={project?.name || `Residence ${id}`}
+                className="share"
+              />
             </div>
           </div>
 
@@ -246,54 +228,6 @@ const VisualizerId = () => {
           </div>
         </div>
       </section>
-
-      {isShareModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsShareModalOpen(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Share Design</h2>
-              <button 
-                onClick={() => setIsShareModalOpen(false)}
-                className="modal-close"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="modal-content">
-              <p className="modal-description">
-                Share this design with anyone using the link below:
-              </p>
-
-              <div className="share-link-container">
-                <input
-                  type="text"
-                  readOnly
-                  value={shareLink}
-                  className="share-link-input"
-                />
-                <Button
-                  size="sm"
-                  onClick={handleCopyLink}
-                  className={`copy-button ${isCopied ? "copied" : ""}`}
-                >
-                  {isCopied ? (
-                    <>
-                      <Check className="w-4 h-4 mr-1" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 mr-1" />
-                      Copy Link
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
