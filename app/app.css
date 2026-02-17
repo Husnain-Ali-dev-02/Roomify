@@ -399,6 +399,54 @@
         }
     }
 
+    .modal-overlay {
+        @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4;
+
+        .modal {
+            @apply bg-white rounded-xl shadow-2xl max-w-md w-full border border-zinc-200 overflow-hidden;
+
+            .modal-header {
+                @apply flex items-center justify-between gap-4 p-5 border-b border-zinc-100;
+
+                h2 {
+                    @apply text-lg font-serif font-bold text-black m-0;
+                }
+
+                .modal-close {
+                    @apply flex items-center justify-center w-8 h-8 rounded hover:bg-zinc-100 transition-colors text-zinc-500 hover:text-black;
+                }
+            }
+
+            .modal-content {
+                @apply p-6;
+
+                .modal-description {
+                    @apply text-sm text-zinc-600 mb-6 leading-relaxed m-0;
+                }
+
+                .share-link-container {
+                    @apply flex gap-3 items-stretch;
+
+                    .share-link-input {
+                        @apply flex-1 px-4 py-2 text-sm border border-zinc-200 rounded-lg bg-zinc-50 text-zinc-600 font-mono;
+                        
+                        &:focus {
+                            @apply outline-none ring-2 ring-primary/50 border-primary;
+                        }
+                    }
+
+                    .copy-button {
+                        @apply bg-primary text-white hover:bg-orange-600 h-auto shadow-sm border-none whitespace-nowrap;
+
+                        &.copied {
+                            @apply bg-green-600 hover:bg-green-700;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     .home {
         @apply min-h-screen bg-background relative overflow-x-hidden text-foreground;
 
