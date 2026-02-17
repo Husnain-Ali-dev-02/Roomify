@@ -12,7 +12,7 @@ import {
 
 const VisualizerId = () => {
   const { id } = useParams();
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
   const { userId } = useOutletContext<AuthContext>();
 
   const hasInitialGenerated = useRef(false);
@@ -22,7 +22,7 @@ const VisualizerId = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
 
-  const handleBack = () => naviagte("/");
+  const handleBack = () => navigate("/");
   const runGeneration = async (item : DesignItem) => {
     if (!id || !item.sourceImage) return;
     try {
