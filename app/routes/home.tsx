@@ -4,8 +4,8 @@ import { ArrowRight, ArrowUpRight, Clock, Layers } from "lucide-react";
 import Button from "components/ui/Button";
 import Upload from "components/Upload";
 import { useNavigate } from "react-router";
-import { useRef, useState } from "react";
-import { createProject } from "lib/puter.action";
+import { useEffect, useRef, useState } from "react";
+import { createProject, getProjects } from "lib/puter.action";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,47 +14,58 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 export default function Home() {
-   const navigate = useNavigate();
-    const [projects, setProjects] = useState<DesignItem[]>([]);
-    const isCreatingProjectRef = useRef(false);
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState<DesignItem[]>([]);
+  const isCreatingProjectRef = useRef(false);
 
-
-    const handleUploadComplete = async (base64Image: string) =>{
+  const handleUploadComplete = async (base64Image: string) => {
+    try {
+      if (isCreatingProjectRef.current) return false;
+      isCreatingProjectRef.current = true;
       const newId = Date.now().toString();
       const name = `Residence ${newId}`;
 
-      const newItem ={
-         id: newId, name, sourceImage: base64Image, renderedImage: undefined,
-         timestamp: Date.now()
-      }
-      const saved = await createProject  ({ item: newItem, visibility: 'private'});
+      const newItem = {
+        id: newId,
+        name,
+        sourceImage: base64Image,
+        renderedImage: undefined,
+        timestamp: Date.now(),
+      };
+      const saved = await createProject({
+        item: newItem,
+        visibility: "private",
+      });
 
-      if(!saved){
-        console.error("Failed to create project")
+      if (!saved) {
+        console.error("Failed to create project");
         return false;
       }
 
-      setProjects((prev) =>[newItem, ...prev]);
+      setProjects((prev) => [newItem, ...prev]);
 
-     navigate(`/visualizer/${newId}`, {
-                state: {
-                    initialImage: saved.sourceImage,
-                    initialRendered: saved.renderedImage || null,
-                    name
-                }
-            });   
+      navigate(`/visualizer/${newId}`, {
+        state: {
+          initialImage: saved.sourceImage,
+          initialRendered: saved.renderedImage || null,
+          name,
+        },
+      });
 
-            return true;
+      return true;
+    } finally {
+      isCreatingProjectRef.current = false;
     }
+  };
 
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const items = await getProjects();
 
-
-
-
-
-
-
-
+      setProjects(items);
+    };
+    fetchProjects();
+  }, []);
 
   return (
     <div className="home">
@@ -112,44 +123,49 @@ export default function Home() {
           </div>
 
           <div className="projects-grid">
-       {projects.map(({id, name, renderedImage, sourceImage, timestamp}) => (
-                          <div key={id} className="project-card group" onClick={() => navigate(`/visualizer/${id}`, {
-    state: {
-        initialImage: sourceImage,
-        initialRendered: renderedImage || null,
-        name,
-    }
-})}>
-                              <div className="preview">
-                                  <img  src={renderedImage || sourceImage} alt="Project"
-                                  />
+            {projects.map(
+              ({ id, name, renderedImage, sourceImage, timestamp }) => (
+                <div
+                  key={id}
+                  className="project-card group"
+                  onClick={() =>
+                    navigate(`/visualizer/${id}`, {
+                      state: {
+                        initialImage: sourceImage,
+                        initialRendered: renderedImage || null,
+                        name,
+                      },
+                    })
+                  }
+                >
+                  <div className="preview">
+                    <img src={renderedImage || sourceImage} alt="Project" />
 
-                                  <div className="badge">
-                                      <span>Community</span>
-                                  </div>
-                              </div>
-
-                              <div className="card-body">
-                                  <div>
-                                      <h3>{name}</h3>
-
-                                      <div className="meta">
-                                          <Clock size={12} />
-                                          <span>{new Date(timestamp).toLocaleDateString()}</span>
-                                          <span>By HA.DeV</span>
-                                      </div>
-                                  </div>
-                                  <div className="arrow">
-                                      <ArrowUpRight size={18} />
-                                  </div>
-                              </div>
-                          </div>
-                      ))}
+                    <div className="badge">
+                      <span>Community</span>
+                    </div>
                   </div>
-           
+
+                  <div className="card-body">
+                    <div>
+                      <h3>{name}</h3>
+
+                      <div className="meta">
+                        <Clock size={12} />
+                        <span>{new Date(timestamp).toLocaleDateString()}</span>
+                        <span>By HA.DeV</span>
+                      </div>
+                    </div>
+                    <div className="arrow">
+                      <ArrowUpRight size={18} />
+                    </div>
+                  </div>
+                </div>
+              ),
+            )}
           </div>
+        </div>
       </section>
     </div>
   );
-
 }

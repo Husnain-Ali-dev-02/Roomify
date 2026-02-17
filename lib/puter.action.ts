@@ -16,7 +16,7 @@ export const getCurrentUser = async () => {
 }
 
 export const createProject = async ({ item, visibility = "private" }: CreateProjectParams): Promise<DesignItem | null | undefined> => {
-    if(!PUTER_WORKER_URL) {
+    if(!PUTER_WORKER_URL) { 
         console.warn('Missing VITE_PUTER_WORKER_URL; skip history fetch;');
         return null;
     }
@@ -69,7 +69,7 @@ export const createProject = async ({ item, visibility = "private" }: CreateProj
         });
 
         if(!response.ok) {
-            console.error('failed to save the project', await response.text());
+            console.error('Failed to save the project', await response.text());
             return null;
         }
 
